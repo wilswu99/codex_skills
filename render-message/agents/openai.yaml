@@ -1,0 +1,4 @@
+interface:
+  display_name: "Render Message"
+  short_description: "Render messages with math in qutebrowser"
+  default_prompt: "Use $render-message to show the previous message with rendered equations in a new qutebrowser window."
