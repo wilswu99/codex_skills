@@ -1,0 +1,4 @@
+interface:
+  display_name: "Math Writing"
+  short_description: "Write clear mathematical exposition in Wilson's style"
+  default_prompt: "Use $math-writing to rewrite this mathematical document with explicit statements, readable proofs, and a full correctness and clarity review."
