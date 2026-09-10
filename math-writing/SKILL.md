@@ -7,6 +7,9 @@ description: Use whenever writing from scratch or fully rewriting mathematical p
 
 Make the mathematical structure visible. A reader scanning definitions and result statements should recover all technical claims, their assumptions, and their relationships; proofs supply the derivations. These are Wilson's defaults, subject to the current task's instructions.
 
+When writing a new document from scratch, use your model name (e.g. `GPT-6 Astra`) in the author field.
+For rewrites, preserve the existing author.
+
 ## Structure the exposition
 
 - Use explicit `definition`, `lemma`, `theorem`, `proposition`, `corollary`, `proof`, `remark`, and `example` environments where appropriate. Label definitions and result statements, and other blocks when they need cross-references.
