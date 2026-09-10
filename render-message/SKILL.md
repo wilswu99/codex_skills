@@ -1,6 +1,6 @@
 ---
 name: render-message
-description: "Render a conversation message or Markdown with typeset LaTeX equations as a local HTML page in a new qutebrowser window. Use when Wilson asks to render an answer or read it outside the terminal, and by default for assistant messages containing more than one equation."
+description: "Render a conversation message or Markdown with typeset LaTeX equations as a local HTML page in a new qutebrowser window. Use when Wilson asks to render an answer or read it outside the terminal. Automatically render assistant messages containing more than one equation only in local GUI sessions with qutebrowser available; skip automatic rendering over SSH or without a display."
 ---
 
 # Render Message
@@ -9,11 +9,21 @@ Use the bundled renderer instead of rediscovering Markdown or math-rendering too
 
 ## Wilson's preferences
 
-- **Automatically render and open assistant messages containing more than one equation**, without waiting for a separate rendering request. Count equations whether inline or displayed; a mere mention of a variable is not an equation. Wilson can override this default for a particular response.
+- **Automatically render and open assistant messages containing more than one equation** when the availability check below passes, without waiting for a separate rendering request. Count equations whether inline or displayed; a mere mention of a variable is not an equation. Wilson can override this default for a particular response.
 - Use **13pt body text** by default (about 17.3 CSS pixels), with the established light background, readable line spacing, centered text column, and typeset equations. A request for another size overrides this default.
 - Preserve the message's wording, equations, emphasis, and links. For an "exact message" request, do not add a visible title, summarize, or re-explain the answer. A browser-tab title is fine.
 - Open the result in a **new qutebrowser window** with the normal browser profile, both for explicit requests and for the automatic equation threshold above.
 - These defaults apply to conversation messages, not unrelated documents. Messages below the equation threshold stay in chat unless rendering is requested.
+
+## Availability
+
+Before the first automatic render in a session, check the execution environment: `qutebrowser` must be on `PATH`, at least one of `DISPLAY` or `WAYLAND_DISPLAY` must be nonempty, and all of `SSH_CONNECTION`, `SSH_CLIENT`, and `SSH_TTY` must be empty. SSH disables automatic rendering even if a display variable is inherited or forwarded.
+
+If this check fails, silently skip automatic rendering and browser launch and provide the complete answer in chat. Do not create rendering artifacts or request desktop escalation for automatic rendering in that session. Recheck only if the environment changes or Wilson explicitly asks to render.
+
+Explicit rendering requests still use the renderer below. If qutebrowser or a display is unavailable, retain and link the HTML and briefly explain why it could not open. An explicit opening request may use an available forwarded display over SSH.
+
+Display variables do not guarantee a working GUI. If an automatic launch fails because the browser or display is unavailable, provide the complete answer in chat and skip further automatic rendering for the session. A sandbox restriction alone is handled by the authorized desktop escalation below.
 
 ## Render
 
@@ -31,7 +41,7 @@ The helper uses installed `pandoc` and `node`, with bundled KaTeX assets. It ren
 
 ## Open
 
-For an explicit browser request or automatic rendering, use the reported URI:
+When browser/display access is available, for an explicit browser request or automatic rendering that passed the availability check, use the reported URI:
 
 ```sh
 qutebrowser --target window file:///tmp/rendered-message-<id>/message.html
